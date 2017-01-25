@@ -132,7 +132,6 @@ def get_content(filepath):
     loop = asyncio.get_event_loop()
     future = asyncio.ensure_future(collect(listing.keys()))
     loop.run_until_complete(future)
-    loop.close()
     updates = list(filter(lambda x: listing[x[0]] != x[1], future.result()))
 
     if updates:

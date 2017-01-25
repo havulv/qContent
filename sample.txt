@@ -1,4 +1,4 @@
-http://www.scottaaronson.com/blog/?feed=rss2/ NOHASH
-https://terrytao.wordpress.com/feed NOHASH
-https://dolphin-emu.org/blog/ NOHASH
-https://blog.rust-lang.org/ NOHASH
+https://terrytao.wordpress.com/feed 24e460d1f22a88d76ab8442544f2c217cc1e8aa09bb0409ae7ced9b24cc83626750f08c45e4c25ca0d0a19e5dbed4965b1fc23d461a6b65d9c4454c47268c25d
+https://dolphin-emu.org/blog/ fbd94294f490b9c8ec388c40659e0d36a58e3ef616fd73951da3dd05eec974554daef0d71825a901c06af08235ebdcf32a3b26e334281b1afa4e20cb59279399
+http://www.scottaaronson.com/blog/?feed=rss2 c416b8383f5517a647385cd385d90c635f382c6c158f41144c4bd7626bf0f0369817a3692d8635ad32ea469e81da571d8cf3d4a90a5ee637752653b4e90e0ea1
+https://blog.rust-lang.org/ 6a8f22ee17bc60cc4231e6843f45365f824a5874fa7d42093b49c42fc353e0f61c4e5f17b0d1445f0de827b377434d650eb6e29fa650f505f4d7efb8c17b71c5
