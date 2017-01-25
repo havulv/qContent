@@ -118,16 +118,14 @@ def get_cache(filepath):
         listing = { k : v if len(v) == 128 else None for k,v in lines }
     return listing
 
-def main(filepath, simple=True):
+def get_content(filepath):
     '''
         Run the Async loop, gather the results and pass them through
                 the updater.
             Arguments:
                 filepath = a VALID file
-                simple = bool; for simple or complex printing
-                    Default = True
             Returns:
-                Void
+                updates = map generator of updated urls
     '''
     listing = get_cache(filepath)
 
@@ -135,12 +133,17 @@ def main(filepath, simple=True):
     future = asyncio.ensure_future(collect(listing.keys()))
     loop.run_until_complete(future)
     loop.close()
-
     updates = list(filter(lambda x: listing[x[0]] != x[1], future.result()))
+
     if updates:
         update_cache(filepath, updates, listing=listing)
+    return map(lambda x: x[0], updates)
+
+def main(filepath, simple=True):
+    updates = list(get_contents(filepath))
+    if updates:
         if simple:
-            print(' '.join([x[0] for x in updates]))
+            print(' '.join(updates))
         else:
             for i in updates:
                 print("{} has been changed".format(i[0]))
