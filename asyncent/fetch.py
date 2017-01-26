@@ -138,7 +138,7 @@ def get_content(filepath):
         update_cache(filepath, updates, listing=listing)
     return map(lambda x: x[0], updates)
 
-def main(filepath, simple=True):
+def fetch_main(filepath, simple=True):
     updates = list(get_contents(filepath))
     if updates:
         if simple:

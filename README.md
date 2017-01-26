@@ -6,6 +6,7 @@ An asynchronous content tracker.
 ## How do I use it?
 
 First create a file called `whatever_the_hell_you_want.anything`, that follows the structure:
+
 ```
 http://site1 NOHASH
 http://site2 NOHASH
@@ -14,10 +15,12 @@ http://site2 NOHASH
 .
 http://siteN NOHASH
 ```
-and then go into `asyncent\__main__.py` and change `sample.txt` to `path\to\whatever_the_hell_you_want.anything`.
 
-After this short setup, run the module with `python -m asyncent`.
+Next, run `python -m asyncent -d path\to\whatever_the_hell_you_want.anything`.
 
+After this short setup, run the module with `python -m asyncent`. More options are available with `python -m asyncent -h`
+
+Note: When choosing sites, try to choose static webpages or rss/atom feeds. This way, the program will not register small javascript changes or things like that. In fact, rss/atom feeds are preferred and now supported!
 
 
 ## FAQs (Questions asked more than 0 times)

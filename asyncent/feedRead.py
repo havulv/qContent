@@ -34,8 +34,14 @@ def get_new_feed(sites):
     feeds = list(filter(lambda x: x[1], future.result()))
     return feeds
 
-def main_feed(filepath):
-    updates = fetch.get_content(filepath)
+def main_feed(updates):
+    '''
+        Fetches and prints off the rss/atom feeds from a list of sites
+            Arguments:
+                Updates = [site1, site2, site3, ...]
+            Returns:
+                Void
+    '''
     feeds = get_new_feed(updates)
     if feeds:
         for url, feed in feeds:
