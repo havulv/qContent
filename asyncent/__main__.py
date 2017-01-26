@@ -9,7 +9,7 @@ def main():
     if config:
         options = parse_args(config)
         if options.default != config['DEFAULT']['FilePath']:
-            reset(path=options.default)
+            reset(path=options.default[0])
         else:
             if options.feeds:
                 updates = fetch.get_content(options.default)
@@ -29,7 +29,7 @@ def main():
 def reset(path='sample.txt'): # -> Void
     config = configparser.ConfigParser()
     config['DEFAULT'] = { 'FilePath' : path }
-    with open('asyncent.config', 'w') as configfile:
+    with open('asyncent\\asyncent.config', 'w') as configfile:
         config.write(configfile)
 
 def config_parse(): # -> Maybe ConfigParser Object
