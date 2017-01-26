@@ -16,10 +16,10 @@ import asyncio, aiohttp, async_timeout
 
 # Async functions
 
-async def collect(urls):
+async def collect(urls, getter):
     ''' Collect the results from a set of urls '''
     async with aiohttp.ClientSession() as session:
-        tasks = [asyncio.ensure_future(fetch(session, site))
+        tasks = [asyncio.ensure_future(getter(session, site))
                                                 for site in urls]
 
         return await asyncio.gather(*tasks)
@@ -118,6 +118,12 @@ def get_cache(filepath):
         listing = { k : v if len(v) == 128 else None for k,v in lines }
     return listing
 
+def async_process(sites, getter):
+    loop = asyncio.get_event_loop()
+    future = asyncio.ensure_future(collect(sites, getter))
+    loop.run_until_complete(future)
+    return future.result()
+
 def get_content(filepath):
     '''
         Run the Async loop, gather the results and pass them through
@@ -129,23 +135,21 @@ def get_content(filepath):
     '''
     listing = get_cache(filepath)
 
-    loop = asyncio.get_event_loop()
-    future = asyncio.ensure_future(collect(listing.keys()))
-    loop.run_until_complete(future)
-    updates = list(filter(lambda x: listing[x[0]] != x[1], future.result()))
+    updates = async_process(listing.keys(), fetch)
+    updates = list(filter(lambda x: listing[x[0]] != x[1], updates))
 
     if updates:
         update_cache(filepath, updates, listing=listing)
     return map(lambda x: x[0], updates)
 
 def fetch_main(filepath, simple=True):
-    updates = list(get_contents(filepath))
+    updates = list(get_content(filepath))
     if updates:
         if simple:
             print(' '.join(updates))
         else:
             for i in updates:
-                print("{} has been changed".format(i[0]))
+                print("{} has been changed".format(i))
     else:
         print("No updates")
 

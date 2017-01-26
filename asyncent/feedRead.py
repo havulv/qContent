@@ -4,14 +4,6 @@ import asyncio, aiohttp, async_timeout
 import feedparser
 from . import fetch
 
-async def collect_feed(urls):
-    ''' Collect the parsed feeds from a set of urls '''
-    async with aiohttp.ClientSession() as session:
-        tasks = [asyncio.ensure_future(get_feed(session, site))
-                                        for site in urls]
-        return await asyncio.gather(*tasks)
-
-
 async def get_feed(session, url):
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit'
                         '/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0'
@@ -28,10 +20,8 @@ async def get_feed(session, url):
 
 
 def get_new_feed(sites):
-    loop = asyncio.get_event_loop()
-    future = asyncio.ensure_future(collect_feed(sites))
-    loop.run_until_complete(future)
-    feeds = list(filter(lambda x: x[1], future.result()))
+    updates = fetch.async_process(sites, get_feed)
+    feeds = list(filter(lambda x: x[1], updates))
     return feeds
 
 def main_feed(updates):
@@ -54,5 +44,4 @@ def main_feed(updates):
                 print("{} :: {}".format(k.upper(), v))
     else:
         print("Nothing new")
-
 

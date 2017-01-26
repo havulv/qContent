@@ -1,2 +1,2 @@
-http://www.example.com/ NOHASH
+http://www.iana.org/domains/reserved NOHASH
 http://www.feedforall.com/sample.xml NOHASH
