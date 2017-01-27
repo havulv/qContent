@@ -12,7 +12,7 @@ async def get_feed(session, url):
         async with session.get(url, headers=headers) as response:
             html = await response.text(encoding='utf-8')
             parsed = None
-            if 'rss' in html.split('\n')[0]:
+            if 'rss' in ''.join(html.split('\n')[0:5]):
                 parsed = feedparser.parse(html)
             else:
                 del html
@@ -20,8 +20,10 @@ async def get_feed(session, url):
 
 
 def get_new_feed(sites):
-    updates = fetch.async_process(sites, get_feed)
-    feeds = list(filter(lambda x: x[1], updates))
+    if all(map(lambda x: x[:4] == "http", sites)) and sites:
+        updates = fetch.async_process(sites, get_feed)
+        feeds = list(filter(lambda x: x[1], updates))
+    else: feeds = []
     return feeds
 
 def main_feed(updates):
@@ -44,4 +46,10 @@ def main_feed(updates):
                 print("{} :: {}".format(k.upper(), v))
     else:
         print("Nothing new")
+
+if __name__ == "__main__":
+    with open("sample.txt", 'r') as get_sample:
+        sites = [line.split(' ')[0] for line in get_sample.readlines()]
+    main_feed(sites)
+
 

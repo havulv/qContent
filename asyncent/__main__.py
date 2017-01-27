@@ -3,11 +3,12 @@
 import os, asyncio
 import argparse, configparser
 from . import feedRead, fetch
+from sys import argv
 
-def main():
+def main(args=argv[1:]):
     config = config_parse()
     if config:
-        options = parse_args(config)
+        options = parse_args(config, args)
         if options.default != config['DEFAULT']['FilePath']:
             reset(path=options.default[0])
         else:
@@ -45,7 +46,7 @@ def config_parse(): # -> Maybe ConfigParser Object
             config = config_parse()
     return config
 
-def parse_args(config): # -> ArgumentParser Object
+def parse_args(config, args): # -> ArgumentParser Object
     parser = argparse.ArgumentParser(prog='asyncent',
         description=("Get that latest blogpost or new element on a"
             " static webpage. Latest stuff delivered right to your "
@@ -63,7 +64,7 @@ def parse_args(config): # -> ArgumentParser Object
         "-so", "--sites-only", action='store_true', help=("List just the "
         "sites and nothing else. No fancy printing, just sites seperated"
         " by spaces."), default=False)
-    opts = parser.parse_args()
+    opts = parser.parse_args(args)
     return opts
 
 if __name__ == "__main__":

@@ -16,8 +16,11 @@
 '''
 
 import asyncent.fetch as fetch
+import asyncent.feedRead as feed
+import asyncent as acontent
 
 import unittest, configparser, os, random, time
+import feedparser
 
 
 def cover(filepath, listing):
@@ -166,12 +169,33 @@ class TestFetch(TestTemplate):
         self.assertRaises(FileNotFoundError,
                 fetch.get_content, "foo_bar.baz")
 
-@unittest.skip("Tests are not yet implemented")
 class TestFeedRead(TestTemplate):
 
-    # I don't know how to test this yet, because it is basically all async
-    # stuff
-    pass
+    # The sleep is for being 'nice' to the site. I don't want to call
+    # them time after time and overload their servers
+
+    def test_get_new_feed(self):
+        time.sleep(8)
+        self.assertIsInstance(
+                feed.get_new_feed(self.sample_list.keys())[0][1],
+                feedparser.FeedParserDict)
+
+    def test_get_new_feed_only_rss_atom_feed(self):
+        time.sleep(8)
+        site_list = [ k for k in self.sample_list if "xml" in k]
+        self.assertEqual(1, len(feed.get_new_feed(site_list)))
+
+    def test_get_new_feed_no_rss(self):
+        time.sleep(8)
+        site_list = [ k for k in self.sample_list if "xml" not in k]
+        self.assertFalse(bool(feed.get_new_feed(site_list)))
+
+    def test_get_new_feed_no_sites(self):
+        self.assertFalse(bool(feed.get_new_feed([])))
+
+    def test_get_new_feed_bad_input(self):
+        self.assertFalse(bool(feed.get_new_feed(["foo", "bar", "baz"])))
+
 
 @unittest.skip("Tests are not yet implemented")
 class TestMain(TestTemplate):
@@ -179,7 +203,24 @@ class TestMain(TestTemplate):
     '''
         Test the argparser and configparser as well as main actions
     '''
-    pass
+
+    def test_arg_set_reg_default(self):
+        pass
+    def test_arg_set_default(self):
+        pass
+    def test_arg_get_feeds(self):
+        pass
+    def test_arg_get_sites_only(self):
+        pass
+    def test_arg_get_sites_only_n_feeds(self):
+        pass
+    def test_config_parse(self):
+        pass
+    def test_config_parse_bad_config_no_file(self):
+        pass
+    def test_config_parse_bad_config_empty(self):
+        pass
+
 
 if __name__ == "__main__":
     unittest.main(warnings='ignore', argv=['-b'])
