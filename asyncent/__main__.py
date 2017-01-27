@@ -12,7 +12,7 @@ def main():
             reset(path=options.default[0])
         else:
             if options.feeds:
-                updates = fetch.get_content(options.default)
+                updates = fetch.get_cache(options.default).keys()
                 feedRead.main_feed(updates)
             else:
                 fetch.fetch_main(options.default, simple=options.sites_only)
