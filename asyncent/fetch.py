@@ -11,7 +11,7 @@
 
 '''
 
-import hashlib, sys
+import hashlib, os
 import asyncio, aiohttp, async_timeout
 
 # Async functions
@@ -58,12 +58,9 @@ def update_cache(filepath, updates, listing=None):
         if not listing:
             listing = get_cache(filepath)
         for site, hash in updates:
-            try:
-                listing[site] = hash
-            except KeyError:
-                raise ValueError #Hoooo boy, this is an antipattern
+            listing[site] = hash
         ret_flag = write_cache(filepath, listing)
-    except ValueError:
+    except (ValueError, KeyError):
         ret_flag = False
     return ret_flag
 
@@ -74,24 +71,27 @@ def write_cache(filepath, listing):
                 filepath = a VALID file
                 listing = {site : sha512, site : sha512, ...}
                     type(site) = string
-                    type(sha512) = 512-bit hex string
+                    type(sha512) = 512-bit hex string or None
             Returns:
                 True on success
                 False on error
     '''
-    ret_flag = True
-    with open(filepath, 'w') as setter:
-        for site, hash in listing.items():
-            #Check for http and proper byte length
-            if site[:4] == "http" and len(hash) == 128:
-                setter.write("{} {}\n".format(site, hash))
-            elif site[:4] != "http":
-                ret_flag = False
-            #None proper byte length indicates that site needs reading
-            elif len(hash) != 128:
-                setter.write("{} {}\n".format(site, "NOHASH"))
-            else:
-                ret_flag = False
+    if os.path.isfile(filepath):
+        ret_flag = True
+
+        with open(filepath, 'w') as setter:
+            for site, hash in listing.items():
+                #Check for http and proper byte length
+                if site[:4] == "http":
+                    if hash == None:
+                        setter.write("{} {}\n".format(site, "NOHASH"))
+                    elif len(hash) == 128:
+                        setter.write("{} {}\n".format(site, hash))
+                    else:
+                        ret_flag = False
+                else:
+                    ret_flag = False
+    else: raise FileNotFoundError
     return ret_flag
 
 def get_cache(filepath):
@@ -107,15 +107,19 @@ def get_cache(filepath):
     '''
 
     with open(filepath, 'r') as getter:
-        lines = filter(lambda x: x, [i.strip('\n')
-                            for i in getter.readlines()])
+        lines = filter(lambda x: x, [line.strip('\n')
+                            for line in getter.readlines()])
     lines = list(map(lambda x: x.split(' '), lines))
     # All the sites must be http
     if not all(map(lambda x: x[0][:4] == 'http', lines)):
-        raise ValueError
+        raise ValueError("Bad site in {}. All site listings"
+                    " must start with http.".format(filepath))
     # If all the sites have been cached then put into dict
     if all(map(lambda x: len(x)//2 & 1, lines)):
         listing = { k : v if len(v) == 128 else None for k,v in lines }
+    else:
+        raise ValueError("If the site has not been hashed yet, then put"
+                " NOHASH next to the listing")
     return listing
 
 def async_process(sites, getter):
@@ -139,7 +143,10 @@ def get_content(filepath):
     updates = list(filter(lambda x: listing[x[0]] != x[1], updates))
 
     if updates:
-        update_cache(filepath, updates, listing=listing)
+        err = update_cache(filepath, updates, listing=listing)
+        if not err:
+            raise Exception("Unknown error on updating the cache. "
+                    "File a bug report or figure it out yourself.")
     return map(lambda x: x[0], updates)
 
 def fetch_main(filepath, simple=True):
@@ -154,5 +161,6 @@ def fetch_main(filepath, simple=True):
         print("No updates")
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    from sys import argv
+    main(argv[1])
 
