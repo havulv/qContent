@@ -1,4 +1,0 @@
-http://www.scottaaronson.com/blog/?feed=rss2/ NOHASH
-https://terrytao.wordpress.com/feed NOHASH
-https://dolphin-emu.org/blog/ NOHASH
-https://blog.rust-lang.org/ NOHASH
