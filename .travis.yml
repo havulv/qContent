@@ -1,0 +1,24 @@
+language: python
+
+# Why are people lagging behind on 3.6. This is ridiculous. Using generic install
+# python:
+#     - "3.6"
+
+os:
+    - linux
+#   - osx apparently 3.6 can't be downloaded? wtf.
+#   - windows Apparently python on windows is not supported. wtf
+
+before_install:
+    - if [[ ":$PATH:" != *":/home/build/.local/bin:"* ]]; then PATH=/home/build/.local/bin:$PATH; fi;
+    - pip install virtualenv
+    - virtualenv .
+
+install:
+    - source ./bin/activate
+    - pip install -r requirements.txt
+    - pip install .
+
+script:
+    - qc -f ./qc/content.json
+    - nosetests
